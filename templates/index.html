@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Logistics</title>
+    <style>
+      body {
+        font-family: "Arial", sans-serif;
+        background-color: black;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        height: 100vh;
+        justify-content: flex-start;
+      }
+
+      h1 {
+        text-align: left;
+        color: #ffffff;
+        margin-left: 20px;
+        margin-top: 20px;
+      }
+
+      form {
+        background-color: black;
+        box-shadow: 0 0 30px 15px rgba(193, 188, 188, 0.5); /* Grey shadow */
+        padding: 20px;
+        border-radius: 8px;
+        width: 300px;
+        margin-top: 20px;
+        text-align: left;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 5px;
+        color: #ffffff;
+      }
+
+      input,
+      select {
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 10px;
+        box-sizing: border-box;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+
+      input[type="submit"] {
+        background-color: #000000;
+        color: #ffffff;
+        cursor: pointer;
+      }
+
+      input[type="submit"]:hover {
+        background-color: #121111;
+        box-shadow: 0 0 25px 10px rgba(28, 48, 226, 0.5);
+      }
+
+      div#destinations {
+        margin-top: 10px;
+      }
+    </style>
+  </head>
+  <style></style>
+  <body>
+    <h1>Logistics</h1>
+    <img
+      src="{{ url_for('static', path='anime_truck.gif') }}"
+      alt="Animated truck"
+      class="animated"
+    />
+    <form action="/process_form" method="post">
+      <label for="start_location">Start Location:</label>
+      <select name="start_location" required>
+        {% for option in destinations_list %}
+        <option value="{{ option }}">{{ option }}</option>
+        {% endfor %}
+      </select>
+      <br />
+
+      <label for="end_location">pickup Location:</label>
+      <select name="end_location" required>
+        {% for option in destinations_list %}
+        <option value="{{ option }}">{{ option }}</option>
+        {% endfor %}
+      </select>
+      <br />
+
+      <label for="num_destinations">Number of Destinations:</label>
+      <input
+        type="number"
+        name="num_destinations"
+        id="num_destinations"
+        min="1"
+        required
+      />
+      <br />
+
+      <div id="destinations"></div>
+
+      <input type="submit" value="Generate Map" />
+    </form>
+
+    <script>
+      document.getElementById("num_destinations").addEventListener("input", function () {
+          var numDestinations = this.value;
+          var destinationsDiv = document.getElementById("destinations");
+          destinationsDiv.innerHTML = "";
+
+          for (var i = 1; i <= numDestinations; i++) {
+              var label = document.createElement("label");
+              label.textContent = "Destination " + i + ":";
+              var select = document.createElement("select");
+              select.name = "destinations";
+
+              // Populate dropdown options from Python list
+              {% for option in destinations_list %}
+              var optionElem = document.createElement("option");
+              optionElem.value = "{{ option }}";
+              optionElem.textContent = "{{ option }}";
+              select.appendChild(optionElem);
+              {% endfor %}
+
+              destinationsDiv.appendChild(label);
+              destinationsDiv.appendChild(select);
+              destinationsDiv.appendChild(document.createElement("br"));
+          }
+      });
+    </script>
+  </body>
+</html>
